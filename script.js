@@ -184,6 +184,7 @@
   /* ===================== 音乐 ===================== */
 
   var musicReady = true;
+  var stageStarted = false;
 
   function startMusic() {
     if (!musicReady) return;
@@ -209,9 +210,9 @@
     musicBtn.hidden = false;
   });
 
-  // 音乐文件就绪后再显示按钮（避免空按钮）
+  // 音乐文件就绪后再显示按钮（避免空按钮，也避免在欢迎页就冒出来）
   audio.addEventListener('canplay', function () {
-    if (musicReady) musicBtn.hidden = false;
+    if (musicReady && stageStarted) musicBtn.hidden = false;
   });
 
   musicBtn.addEventListener('click', function () {
@@ -382,6 +383,7 @@
   }
 
   function startLetter() {
+    stageStarted = true;
     startMusic();
 
     setTimeout(spawn, 40);
