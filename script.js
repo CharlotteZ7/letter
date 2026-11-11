@@ -403,7 +403,30 @@
     setTimeout(startLetter, 380);
   }
 
+  // iOS 只允许在用户手势里启动音频：
+  // 点「开始查看」时先静音试播一次再暂停，第三段才能真正自动播放
+  var audioUnlocked = false;
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    audioUnlocked = true;
+    var v = audio.volume;
+    audio.volume = 0;
+    var p = audio.play();
+    if (p && typeof p.then === 'function') {
+      p.then(function () {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = v;
+      }).catch(function () {
+        audio.volume = v;
+      });
+    } else {
+      audio.volume = v;
+    }
+  }
+
   startBtn.addEventListener('click', function () {
+    unlockAudio();
     welcome.classList.add('hide');
     setTimeout(function () { welcome.hidden = true; }, 500);
     scan.hidden = false;
